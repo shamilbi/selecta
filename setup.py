@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup
+
 import codecs
+from setuptools import setup
 
 setup(
     name='selecta',
@@ -8,7 +9,8 @@ setup(
     author='Thomas Schüßler',
     author_email='vindolin@gmail.com',
     packages=['selecta'],
-    scripts=['bin/selecta', 'bin/selecta_install_bash'],
+    #scripts=['bin/selecta', 'bin/selecta_install_bash'],
+    entry_points={'console_scripts': ['selecta = selecta.__init__:main']},
     url='https://github.com/vindolin/selecta',
     license='MIT',
     description='Interactively select an entry from your bash/zsh history.',
