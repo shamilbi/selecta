@@ -3,14 +3,17 @@ import fcntl
 import termios
 import sys
 import struct
-import urwid
 import signal
 import re
 import os
+import argparse
 # from subprocess import call
+import urwid
 
-if (sys.version_info < (3, 0)):
-    exit('Sorry, you need Python 3 to run this!')
+# pylint: disable=line-too-long
+
+if sys.version_info < (3, 0):
+    sys.exit('Sorry, you need Python 3 to run this!')
 
 palette = [
     ('head', '', '', '', '#000', '#618'),
@@ -100,18 +103,18 @@ class SearchEdit(urwid.Edit):
         if key == 'enter':
             urwid.emit_signal(self, 'done', self.get_edit_text())
             return
-        elif key == 'esc':
+        if key == 'esc':
             urwid.emit_signal(self, 'done', None)
             return
-        elif key == 'tab':
+        if key == 'tab':
             urwid.emit_signal(self, 'toggle_case_modifier')
             urwid.emit_signal(self, 'change', self, self.get_edit_text())
             return
-        elif key == 'ctrl r':
+        if key == 'ctrl r':
             urwid.emit_signal(self, 'toggle_regexp_modifier')
             urwid.emit_signal(self, 'change', self, self.get_edit_text())
             return
-        elif key == 'down':
+        if key == 'down':
             urwid.emit_signal(self, 'done', None)
             return
 
@@ -148,7 +151,7 @@ class LineCountWidget(urwid.Text):
         self.set_text('{}/{}'.format(self.visible_lines, self.relevant_lines))
 
 
-class Selector(object):
+class Selector:
     def __init__(self, revert_order, remove_bash_prefix, remove_zsh_prefix, regexp, case_sensitive,
                  remove_duplicates, show_matches, infile):
 
@@ -169,7 +172,7 @@ class Selector(object):
                 line = line.split(None, 1)[1].strip()
 
             if remove_zsh_prefix:
-                line = re.split('\s+', line, maxsplit=4)[-1]
+                line = re.split(r'\s+', line, maxsplit=4)[-1]
 
             if 'selecta <(history)' not in line:
                 if not remove_duplicates or line not in self.lines:
@@ -234,7 +237,7 @@ class Selector(object):
             self.modifier_display.set_text('')
 
     def update_list(self, search_text):
-        if search_text == '' or search_text == '"' or search_text == '""':  # show all lines
+        if search_text in ('', '"', '""'):  # show all lines
             self.item_list[:] = [ItemWidgetPlain(item) for item in self.lines]
             self.line_count_display.update(len(self.item_list))
         else:
@@ -319,7 +322,7 @@ class Selector(object):
             self.inject_command(line)
             raise urwid.ExitMainLoop()
 
-        elif input_ == 'tab':
+        if input_ == 'tab':
             self.toggle_case_modifier()
 
         elif input_ == 'ctrl r':
@@ -366,7 +369,6 @@ class Selector(object):
 
 
 def main():
-    import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--revert-order', action='store_true', default=False, help='revert the order of the lines')
     parser.add_argument('-b', '--remove-bash-prefix', action='store_true', default=False, help='remove the numeric prefix from bash history')
@@ -383,7 +385,7 @@ def main():
 
     if args.infile.name == '<stdin>':
         parser.print_help()
-        exit('\nYou must provide an infile!')
+        sys.exit('\nYou must provide an infile!')
 
     if args.bash:
         args.revert_order = True
