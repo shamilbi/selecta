@@ -53,14 +53,15 @@ class Selector:
 
         for line in lines:
             if remove_bash_prefix:
-                line = line.split(None, 1)[1].strip()
+                # ^   21 command --> [21, command] --> command
+                line = line.split(sep=None, maxsplit=1)[1].strip()
 
             if remove_zsh_prefix:
                 line = re.split(r'\s+', line, maxsplit=4)[-1]
 
-            if 'selecta <(history)' not in line:
-                if not remove_duplicates or line not in self.lines:
-                    self.lines.append(line)
+            #if 'selecta <(history)' not in line:
+            if not remove_duplicates or line not in self.lines:
+                self.lines.append(line)
 
         self.line_widgets = []
 
@@ -74,11 +75,13 @@ class Selector:
         urwid.connect_signal(self.search_edit, 'toggle_regexp_modifier', self.toggle_regexp_modifier)
         urwid.connect_signal(self.search_edit, 'change', self.edit_change)
 
-        header = urwid.AttrMap(urwid.Columns([
-            urwid.AttrMap(self.search_edit, 'input', 'input'),
-            self.modifier_display,
-            ('pack', self.line_count_display),
-        ], dividechars=1, focus_column=0), 'head', 'head')
+        header = urwid.AttrMap(
+            urwid.Columns(
+                [urwid.AttrMap(self.search_edit, 'input', 'input'),
+                 self.modifier_display,
+                 ('pack', self.line_count_display), ],
+                dividechars=1, focus_column=0),
+            'head', 'head')
 
         self.item_list = urwid.SimpleListWalker(self.line_widgets)
         self.listbox = ResultList(self.item_list)
