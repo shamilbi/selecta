@@ -98,6 +98,7 @@ class Selector:
         # TODO workaround, when update_list is called directly, the linecount widget gets not updated
         self.loop.set_alarm_in(0.01, lambda *loop: self.update_list(''))
 
+        self.update_modifiers()
         self.loop.run()
 
     def list_resize(self, size):
@@ -112,16 +113,10 @@ class Selector:
         self.update_modifiers()
 
     def update_modifiers(self):
-        modifiers = []
-        if self.regexp_modifier:
-            modifiers.append('regexp')
-        if self.case_modifier:
-            modifiers.append('case')
-
-        if len(modifiers) > 0:
-            self.modifier_display.set_text('[{}]'.format(','.join(modifiers)))
-        else:
-            self.modifier_display.set_text('')
+        modifiers = [
+            'regexp' if self.regexp_modifier else 'noregexp',
+            'case' if self.case_modifier else 'nocase']
+        self.modifier_display.set_text('[{}]'.format(','.join(modifiers)))
 
     def update_list(self, search_text):
         if search_text in ('', '"', '""'):  # show all lines
