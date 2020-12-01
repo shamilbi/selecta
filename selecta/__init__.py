@@ -145,12 +145,10 @@ class Selector:
                     pattern = re.escape(search_text.strip('"'))
                 else:
                     # default - split all words and convert to regular expression like: word1.*word2.*word3
-                    subpatterns = search_text.split(' ')
-                    if len(subpatterns) == 1:
-                        search_words = pattern = search_text
-                        pattern = re.escape(pattern)
+                    search_words = search_text.split(' ')
+                    if len(search_words) == 1:
+                        pattern = re.escape(search_text)
                     else:
-                        search_words = search_text.split(' ')
                         highlight_type = HIGHLIGHT_WORDS
                         pattern = '.*'.join([re.escape(word) for word in search_words])
 
