@@ -92,7 +92,7 @@ class SearchEdit(urwid.Edit):
             urwid.emit_signal(self, 'done', None)
             return
 
-        urwid.Edit.keypress(self, size, key)
+        super().keypress(size, key)
 
 
 class ResultList(urwid.ListBox):
@@ -101,26 +101,22 @@ class ResultList(urwid.ListBox):
 
     def __init__(self, *args):
         self.last_size = None
-        urwid.ListBox.__init__(self, *args)
+        super().__init__(*args)
 
     def render(self, size, focus=False):
         if size != self.last_size:
             self.last_size = size
             urwid.emit_signal(self, 'resize', size)
-        return urwid.ListBox.render(self, size, focus)
+        return super().render(size, focus)
 
 
 class LineCountWidget(urwid.Text):
-    def __init__(self, text: str):
+    def __init__(self):
+        super().__init__('')
         self.relevant_lines = 0
         self.visible_lines = 0
-        super().__init__(text)
 
     def update(self, relevant_lines=None, visible_lines=None):
-        if not hasattr(self, 'relevant_lines'):
-            self.relevant_lines = 0
-            self.visible_lines = 0
-
         if relevant_lines is not None:
             self.relevant_lines = relevant_lines
 

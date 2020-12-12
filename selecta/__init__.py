@@ -65,7 +65,7 @@ class Selector:
 
         self.line_widgets = []
 
-        self.line_count_display = LineCountWidget('')
+        self.line_count_display = LineCountWidget()
         self.search_edit = SearchEdit(edit_text='')
 
         self.modifier_display = urwid.Text('')
