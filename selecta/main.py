@@ -27,7 +27,6 @@ def main():
         sys.exit('\nYou must provide an infile!')
 
     if args.bash:
-        args.revert_order = True
         args.remove_bash_prefix = True
         args.remove_duplicates = True
 
