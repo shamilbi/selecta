@@ -22,18 +22,21 @@ class ItemWidgetPlain(ItemWidget):
 
 
 class ItemWidgetPattern(ItemWidget):
-    def __init__(self, line, match=None):
-        self.line = line
-
-        # highlight the matches
-        matches = re.split('({match})'.format(match=re.escape(match)), self.line)
+    def __init__(self, m: re.Match):
+        self.line = line = m.string
         parts = []
-        for part in matches:
-            if part == match:
-                parts.append(('pattern', part))
-            else:
-                parts.append(part)
-
+        prev = 0
+        while True:
+            m1, m2 = m.start(), m.end()
+            if s := line[prev: m1]:
+                parts.append(s)
+            parts.append(('pattern', line[m1: m2]))
+            prev = m2
+            m = m.re.search(line, m2)
+            if not m:
+                if s := line[prev: len(line)]:
+                    parts.append(s)
+                break
         text = urwid.AttrMap(
             urwid.Text(parts),
             'line',

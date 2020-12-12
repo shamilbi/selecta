@@ -147,8 +147,8 @@ class Selector:
                         highlight_type = HIGHLIGHT_WORDS
                         pattern = '.*'.join([re.escape(word) for word in search_words])
 
-            if self.case_modifier:
-                flags ^= re.IGNORECASE
+            if not self.case_modifier:
+                flags |= re.IGNORECASE
 
             try:
                 re_search = re.compile(pattern, flags).search
@@ -160,7 +160,7 @@ class Selector:
                             if highlight_type == HIGHLIGHT_WORDS:
                                 items.append(ItemWidgetWords(item, search_words=search_words))
                             else:
-                                items.append(ItemWidgetPattern(item, match=match.group()))
+                                items.append(ItemWidgetPattern(match))
                         else:
                             items.append(ItemWidgetPlain(item))
 
